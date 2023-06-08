@@ -1,4 +1,4 @@
-﻿namespace Magical_Villa.Logging
+﻿namespace MagicalVilla_API.Logging
 {
     public class Logging : ILogging
     {

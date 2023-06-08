@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Magical_Villa.Models.Dto
+namespace MagicalVilla_API.Models.Dto
 {
     public class stringResponse
     {
