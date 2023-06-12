@@ -11,6 +11,7 @@ using AutoMapper;
 using MagicalVilla_API.Repository.IRepository;
 using System.Net;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MagicalVilla_API.Controllers
 {
@@ -36,7 +37,10 @@ namespace MagicalVilla_API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [Authorize]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVillasAsync()
         {
             try
@@ -57,9 +61,11 @@ namespace MagicalVilla_API.Controllers
             return _response;
         }
 
-
-        [HttpGet("{id:int}", Name = "GetVilla")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Roles = "Admin")]
+		[HttpGet("{id:int}", Name = "GetVilla")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         //[ProducesResponseType(200)]
@@ -94,7 +100,8 @@ namespace MagicalVilla_API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+		//[Authorize(Roles = "admin")]
+		[ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> CreateVillaAsync([FromBody] VillaCreateDto createDto)
@@ -103,7 +110,7 @@ namespace MagicalVilla_API.Controllers
             {
                 if (await _dbVilla.GetAsync(u => u.Name.ToLower() == createDto.Name.ToLower()) != null)
                 {
-                    ModelState.AddModelError("CustomError", "Villa already Exists!");
+                    ModelState.AddModelError("ErrorMessages", "Villa already Exists!");
                     return BadRequest(ModelState);
                 }
 
@@ -129,9 +136,12 @@ namespace MagicalVilla_API.Controllers
 
         [HttpDelete("{id:int}", Name = "DeleteVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> DeleteVillaAsync(int id)
+		[Authorize(Roles = "CUSTOM")]
+		public async Task<ActionResult<APIResponse>> DeleteVillaAsync(int id)
         {
             try
             {
