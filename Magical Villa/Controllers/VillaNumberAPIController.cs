@@ -12,12 +12,15 @@ using MagicalVilla_API.Repository.IRepository;
 using System.Net;
 using Azure;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace MagicalVilla_API.Controllers
 {
     //[Route("api/VillaAPI")]
-    [Route("api/VillaNumberAPI")]
+    [Route("api/v{version:apiVersion}/VillaNumberAPI")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class VillaNumberAPIController : ControllerBase
     {
         private readonly ILogging _logger;
@@ -61,7 +64,6 @@ namespace MagicalVilla_API.Controllers
             return _response;
         }
 
-
         [HttpGet("{id:int}", Name = "GetVillaNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -97,6 +99,7 @@ namespace MagicalVilla_API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -134,6 +137,7 @@ namespace MagicalVilla_API.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}", Name = "DeleteVillaNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -165,6 +169,7 @@ namespace MagicalVilla_API.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut(Name = "UpdateVillaNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

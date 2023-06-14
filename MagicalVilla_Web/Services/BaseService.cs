@@ -2,6 +2,8 @@
 using MagicalVilla_Web.Models;
 using MagicalVilla_Web.Services.IServices;
 using Newtonsoft.Json;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -47,16 +49,21 @@ namespace MagicalVilla_Web.Services
 
                 HttpResponseMessage apiResponse = null;
 
+                if (!string.IsNullOrEmpty(apiRequest.Token))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiRequest.Token);
+                }
+
                 apiResponse = await client.SendAsync(message);
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
 
                 try
                 {
                     APIResponse ApiResponse = JsonConvert.DeserializeObject<APIResponse>(apiContent);
-                    if (apiResponse.StatusCode == System.Net.HttpStatusCode.BadRequest
-                        || apiResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    if (apiResponse.StatusCode == HttpStatusCode.BadRequest
+                        || apiResponse.StatusCode == HttpStatusCode.NotFound)
                     {
-						ApiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+						ApiResponse.StatusCode = HttpStatusCode.BadRequest;
 						ApiResponse.IsSuccess = false;
 						var res = JsonConvert.SerializeObject(ApiResponse);
 						var returnObj = JsonConvert.DeserializeObject<T>(res);

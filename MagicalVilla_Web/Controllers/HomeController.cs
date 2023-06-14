@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MagicalVilla_Utility;
 using MagicalVilla_Web.Models;
 using MagicalVilla_Web.Models.Dto;
 using MagicalVilla_Web.Services.IServices;
@@ -24,7 +25,7 @@ namespace MagicalVilla_Web.Controllers
 		{
 			List<VillaDto> list = new();
 
-			var response = await _villaService.GetAllAsync<APIResponse>();
+			var response = await _villaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
 			if (response != null && response.IsSuccess)
 			{
 				list = JsonConvert.DeserializeObject<List<VillaDto>>(Convert.ToString(response.Result));

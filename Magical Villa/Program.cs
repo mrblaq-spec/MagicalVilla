@@ -4,6 +4,7 @@ using MagicalVilla_API.Logging;
 using MagicalVilla_API.Repository;
 using MagicalVilla_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -20,7 +21,16 @@ builder.Services.AddScoped<IVillaRepository, VIllaRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVillaNumberRepository, VIllaNumberRepository>();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-
+builder.Services.AddApiVersioning(options => {
+    options.AssumeDefaultVersionWhenUnspecified = true;
+	options.DefaultApiVersion = new ApiVersion(1, 0);
+	options.ReportApiVersions = true;
+});
+builder.Services.AddVersionedApiExplorer(options =>
+{
+	options.GroupNameFormat = "'v'VVV";
+	options.SubstituteApiVersionInUrl = true;
+});
 var key = builder.Configuration.GetValue<string>("ApiSettings:apiSecret");
 
 builder.Services.AddAuthentication(x =>
@@ -83,6 +93,23 @@ builder.Services.AddSwaggerGen(options =>
 			new List<string>()
 		}
 	});
+	options.SwaggerDoc("v1", new OpenApiInfo
+	{
+		Version = "v1.0",
+		Title = "Magical Villa",
+		Description = "API to manage Villas",
+		TermsOfService = new Uri("https://example.com/terms"),
+		Contact = new OpenApiContact
+		{
+			Name = "OnlineIncomeStudio",
+			Url = new Uri("https://www.linkedin.com/in/llmarshall/")
+		},
+		License = new OpenApiLicense
+		{
+			Name = "Example License",
+			Url = new Uri("https://example/com/license")
+		}
+	});
 });
 
 builder.Services.AddSingleton<ILogging, LoggingV2>();
@@ -92,7 +119,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+	{
+		options.SwaggerEndpoint("/swagger/v1/swagger.json", "Magical_VillaV1");
+	});
 }
 
 app.UseHttpsRedirection();

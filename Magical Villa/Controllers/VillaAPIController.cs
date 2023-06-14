@@ -16,12 +16,12 @@ using Microsoft.AspNetCore.Authorization;
 namespace MagicalVilla_API.Controllers
 {
     //[Route("api/VillaAPI")]
-    [Route("api/villaAPI")]
+    [Route("api/v{version:apiVersion}/villaAPI")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class VillaAPIController : ControllerBase
     {
         private readonly ILogging _logger;
-
         protected APIResponse _response;
         private readonly IVillaRepository _dbVilla;
         private readonly IMapper _mapper;
@@ -37,8 +37,7 @@ namespace MagicalVilla_API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<APIResponse>> GetVillasAsync()
@@ -61,8 +60,7 @@ namespace MagicalVilla_API.Controllers
             return _response;
         }
 
-		[Authorize(Roles = "Admin")]
-		[HttpGet("{id:int}", Name = "GetVilla")]
+        [HttpGet("{id:int}", Name = "GetVilla")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -100,8 +98,8 @@ namespace MagicalVilla_API.Controllers
         }
 
         [HttpPost]
-		//[Authorize(Roles = "admin")]
-		[ProducesResponseType(StatusCodes.Status201Created)]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<APIResponse>> CreateVillaAsync([FromBody] VillaCreateDto createDto)
@@ -140,7 +138,7 @@ namespace MagicalVilla_API.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-		[Authorize(Roles = "CUSTOM")]
+		[Authorize(Roles = "Admin")]
 		public async Task<ActionResult<APIResponse>> DeleteVillaAsync(int id)
         {
             try
@@ -168,6 +166,7 @@ namespace MagicalVilla_API.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut(Name = "UpdateVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -194,6 +193,7 @@ namespace MagicalVilla_API.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id:int}", Name = "UpdatePartialVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
