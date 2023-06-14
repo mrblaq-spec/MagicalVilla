@@ -21,7 +21,7 @@ builder.Services.AddScoped<IVillaRepository, VIllaRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IVillaNumberRepository, VIllaNumberRepository>();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-builder.Services.AddApiVersioning(options => {
+/*builder.Services.AddApiVersioning(options => {
     options.AssumeDefaultVersionWhenUnspecified = true;
 	options.DefaultApiVersion = new ApiVersion(1, 0);
 	options.ReportApiVersions = true;
@@ -30,7 +30,7 @@ builder.Services.AddVersionedApiExplorer(options =>
 {
 	options.GroupNameFormat = "'v'VVV";
 	options.SubstituteApiVersionInUrl = true;
-});
+});*/
 var key = builder.Configuration.GetValue<string>("ApiSettings:apiSecret");
 
 builder.Services.AddAuthentication(x =>
@@ -93,7 +93,7 @@ builder.Services.AddSwaggerGen(options =>
 			new List<string>()
 		}
 	});
-	options.SwaggerDoc("v1", new OpenApiInfo
+	/*options.SwaggerDoc("v1", new OpenApiInfo
 	{
 		Version = "v1.0",
 		Title = "Magical Villa",
@@ -109,7 +109,7 @@ builder.Services.AddSwaggerGen(options =>
 			Name = "Example License",
 			Url = new Uri("https://example/com/license")
 		}
-	});
+	});*/
 });
 
 builder.Services.AddSingleton<ILogging, LoggingV2>();
@@ -119,10 +119,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
+	app.UseSwaggerUI();
+	/*app.UseSwaggerUI(options =>
 	{
 		options.SwaggerEndpoint("/swagger/v1/swagger.json", "Magical_VillaV1");
-	});
+	});*/
 }
 
 app.UseHttpsRedirection();

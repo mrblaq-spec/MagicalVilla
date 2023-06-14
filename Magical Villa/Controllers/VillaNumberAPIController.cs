@@ -17,10 +17,10 @@ using System.Data;
 
 namespace MagicalVilla_API.Controllers
 {
-    //[Route("api/VillaAPI")]
-    [Route("api/v{version:apiVersion}/VillaNumberAPI")]
+    [Route("api/villaNumberAPI")]
+    //[Route("api/v{version:apiVersion}/VillaNumberAPI")]
     [ApiController]
-    [ApiVersion("1.0")]
+    //[ApiVersion("1.0")]
     public class VillaNumberAPIController : ControllerBase
     {
         private readonly ILogging _logger;

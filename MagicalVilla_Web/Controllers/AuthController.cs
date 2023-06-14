@@ -29,7 +29,7 @@ namespace MagicalVilla_Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Login(LoginRequestDto obj)
 		{
-			APIResponse response = await _authService.LoginAsync<APIResponse>(obj);
+            APIResponse response = await _authService.LoginAsync<APIResponse>(obj);
 			if(response != null && response.IsSuccess)
 			{
 				LoginResponseDto model = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(response.Result));
