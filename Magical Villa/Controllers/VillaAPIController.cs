@@ -37,16 +37,27 @@ namespace MagicalVilla_API.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetVillasAsync()
+        public async Task<ActionResult<APIResponse>> GetVillasAsync([FromQuery(Name = "filterOccupancy")]int? occupancy)
         {
             try
             {
+                IEnumerable<Villa> villaList;
+
+                if(occupancy > 0)
+                {
+                    villaList = await _dbVilla.GetAllAsync(u => u.Occupancy == occupancy);
+                }
+                else
+                {
+                    villaList = await _dbVilla.GetAllAsync();
+                }
                 //_logger.LogInformation("Getting all villas");
                 _logger.Log("Getting all the Villas", "");
-                IEnumerable<Villa> villaList = await _dbVilla.GetAllAsync();
+                //IEnumerable<Villa> villaList = await _dbVilla.GetAllAsync();
                 _response.Result = _mapper.Map<List<VillaDto>>(villaList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
@@ -61,7 +72,8 @@ namespace MagicalVilla_API.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetVilla")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
