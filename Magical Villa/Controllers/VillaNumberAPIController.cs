@@ -17,10 +17,10 @@ using System.Data;
 
 namespace MagicalVilla_API.Controllers
 {
-    [Route("api/villaNumberAPI")]
-    //[Route("api/v{version:apiVersion}/VillaNumberAPI")]
+    //[Route("api/villaNumberAPI")]
+    [Route("api/v{version:apiVersion}/VillaNumberAPI")]
     [ApiController]
-    //[ApiVersion("1.0")]
+    [ApiVersion("1.0")]
     public class VillaNumberAPIController : ControllerBase
     {
         private readonly ILogging _logger;
@@ -173,7 +173,7 @@ namespace MagicalVilla_API.Controllers
         [HttpPut(Name = "UpdateVillaNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateVillaNumberAsync([FromBody]VillaNumberUpdateDto updateDto)
+        public async Task<ActionResult<APIResponse>> UpdateVillaNumberAsync([FromBody] VillaNumberUpdateDto updateDto)
         {
             try
             {

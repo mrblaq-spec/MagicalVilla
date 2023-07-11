@@ -42,18 +42,18 @@ namespace MagicalVilla_Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateVillaNumber(int id)
 		{
-			VillaNumberCreateVM villNumberVM = new();
+			VillaNumberCreateVM villaNumberVM = new();
 			var response = await _villaService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(SD.SessionToken));
 			if (response != null && response.IsSuccess)
 			{
-				villNumberVM.VillaList = JsonConvert.DeserializeObject<List<VillaDto>>
+                villaNumberVM.VillaList = JsonConvert.DeserializeObject<List<VillaDto>>
 					(Convert.ToString(response.Result)).Select(i => new SelectListItem
 					{
 						Text = i.Name,
 						Value = i.Id.ToString(),
 					});
 			}
-			return View(villNumberVM);
+			return View(villaNumberVM);
 		}
 
 		[HttpPost]
@@ -71,9 +71,15 @@ namespace MagicalVilla_Web.Controllers
 				}
 				else
 				{
+					/*TempData["error"] = "Error Encountered!";
+                    return RedirectToAction(nameof(IndexVillaNumber));
+                    ModelState.AddModelError("ErrorMessages", res.ErrorMessages.FirstOrDefault());*/
+
 					if (res.ErrorMessages.Count > 0)
 					{
 						ModelState.AddModelError("ErrorMessages", res.ErrorMessages.FirstOrDefault());
+						TempData["error"] = "Error Encountered!";
+						return RedirectToAction(nameof(IndexVillaNumber));
 					}
 				}
 			}
@@ -114,8 +120,9 @@ namespace MagicalVilla_Web.Controllers
                 return View(villaNumberVM);
 			}
 
-			return NotFound();
-		}
+            TempData["error"] = "Error Encountered!";
+            return RedirectToAction(nameof(IndexVillaNumber));
+        }
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -125,8 +132,7 @@ namespace MagicalVilla_Web.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var res = await _villaNumberService.UpdateAsync<APIResponse>
-					(model.VillaNumber, HttpContext.Session.GetString(SD.SessionToken));
+				var res = await _villaNumberService.UpdateAsync<APIResponse>(model.VillaNumber, HttpContext.Session.GetString(SD.SessionToken));
 				if (res != null && res.IsSuccess)
 				{
                     TempData["success"] = "Villa Number Updated Successfully!";

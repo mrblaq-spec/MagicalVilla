@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MagicalVilla_API.Controllers
 {
-    [Route("api/villaAPI")]
-    //[Route("api/v{version:apiVersion}/villaAPI")]
+    //[Route("api/villaAPI")]
+    [Route("api/v{version:apiVersion}/villaAPI")]
     [ApiController]
-    //[ApiVersion("1.0")]
+    [ApiVersion("1.0")]
     public class VillaAPIController : ControllerBase
     {
         private readonly ILogging _logger;

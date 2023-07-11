@@ -20,13 +20,13 @@ namespace MagicalVilla_Web.Services
         }
         public async Task<T> SendAsync<T>(APIRequest apiRequest)
         {
-            try 
+            try
             {
                 var client = httpClient.CreateClient("MagicalAPI");
                 HttpRequestMessage message = new HttpRequestMessage();
                 message.Headers.Add("Accept", "application/json");
                 message.RequestUri = new Uri(apiRequest.Url);
-                if(apiRequest.Data != null)
+                if (apiRequest.Data != null)
                 {
                     message.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data),
                         Encoding.UTF8, "application/json");
@@ -43,7 +43,7 @@ namespace MagicalVilla_Web.Services
                         message.Method = HttpMethod.Delete;
                         break;
                     default:
-                        message.Method=HttpMethod.Get;
+                        message.Method = HttpMethod.Get;
                         break;
                 }
 
@@ -60,10 +60,15 @@ namespace MagicalVilla_Web.Services
                 try
                 {
                     APIResponse ApiResponse = JsonConvert.DeserializeObject<APIResponse>(apiContent);
-                    if (apiResponse.StatusCode == HttpStatusCode.BadRequest
-                        || apiResponse.StatusCode == HttpStatusCode.NotFound)
+                    if (ApiResponse != null && (apiResponse.StatusCode == HttpStatusCode.BadRequest
+                        || apiResponse.StatusCode == HttpStatusCode.NotFound) 
+                        || apiResponse.StatusCode == HttpStatusCode.Unauthorized)
                     {
-						ApiResponse.StatusCode = HttpStatusCode.BadRequest;
+                        ApiResponse.ErrorMessages = new List<string>
+                        {
+                            "Error Encountered!"
+                        };
+                        ApiResponse.StatusCode = HttpStatusCode.BadRequest;
 						ApiResponse.IsSuccess = false;
 						var res = JsonConvert.SerializeObject(ApiResponse);
 						var returnObj = JsonConvert.DeserializeObject<T>(res);
