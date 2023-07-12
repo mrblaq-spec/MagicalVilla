@@ -41,7 +41,8 @@ namespace MagicalVilla_API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetVillasAsync([FromQuery(Name = "filterOccupancy")]int? occupancy)
+        public async Task<ActionResult<APIResponse>> GetVillasAsync([FromQuery(Name = "filterOccupancy")]int? occupancy,
+            [FromQuery] string? search, int pageSize = 2, int pageNumber = 1)
         {
             try
             {
@@ -49,7 +50,8 @@ namespace MagicalVilla_API.Controllers
 
                 if(occupancy > 0)
                 {
-                    villaList = await _dbVilla.GetAllAsync(u => u.Occupancy == occupancy);
+                    villaList = await _dbVilla.GetAllAsync(u => u.Occupancy == occupancy, pageSize:pageSize,
+                        pageNumber:pageNumber);
                 }
                 else
                 {
@@ -58,6 +60,11 @@ namespace MagicalVilla_API.Controllers
                 //_logger.LogInformation("Getting all villas");
                 _logger.Log("Getting all the Villas", "");
                 //IEnumerable<Villa> villaList = await _dbVilla.GetAllAsync();
+                if (!string.IsNullOrEmpty(search))
+                {
+                    villaList = villaList.Where(/*u => u.Amenity.ToLower().Contains(search)
+                    || */u => u.Name.ToLower().Contains(search));
+                }
                 _response.Result = _mapper.Map<List<VillaDto>>(villaList);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
