@@ -1,14 +1,15 @@
 using MagicalVilla_API;
 using MagicalVilla_API.Data;
 using MagicalVilla_API.Logging;
+using MagicalVilla_API.Models;
 using MagicalVilla_API.Repository;
 using MagicalVilla_API.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(option => {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddResponseCaching();
 builder.Services.AddScoped<IVillaRepository, VIllaRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -125,13 +127,15 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-	//app.UseSwaggerUI();
-	app.UseSwaggerUI(options =>
-	{
-		options.SwaggerEndpoint("/swagger/v1/swagger.json", "Magical_VillaV1");
-	});
+    
 }
+app.UseSwagger();
+//app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Magical_VillaV1");
+	options.RoutePrefix = String.Empty;
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

@@ -8,7 +8,8 @@ namespace MagicalVilla_API.Controllers
 {
 	//[Route("api/UsersAuthAPI")]
 	[Route("api/v{version:apiVersion}/UsersAuthAPI")]
-	//[ApiController]
+	[ApiController]
+	[ApiVersionNeutral]
 	public class UserAPIController : Controller
 	{
 		public readonly IUserRepository _userRepo;
@@ -16,7 +17,7 @@ namespace MagicalVilla_API.Controllers
         public UserAPIController(IUserRepository userRepo)
         {
             _userRepo = userRepo;
-			this._response = new();
+			_response = new();
         }
 
 		[HttpPost("login")]
